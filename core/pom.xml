@@ -195,6 +195,13 @@ THE SOFTWARE.
       <artifactId>json-lib</artifactId>
       <version>2.4-jenkins-2</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.kohsuke.stapler</groupId>
+      <artifactId>stapler</artifactId>
+      <version>1.255-20181003.120423-2</version>
+    </dependency>
+    
     <dependency>
       <groupId>commons-httpclient</groupId>
       <artifactId>commons-httpclient</artifactId>
