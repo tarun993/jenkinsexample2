@@ -45,7 +45,7 @@ jobs:
         run: |
           PROJECT_VERSION=${{ steps.set-version.outputs.project-version }}
           echo $PROJECT_VERSION
-          FILE_NAME=jenkins_${PROJECT_VERSION}.deb
+          FILE_NAME=jenkins_${PROJECT_VERSION}_all.deb
           echo "::set-output name=file-name::$FILE_NAME"
           wget -q https://get.jenkins.io/debian/${FILE_NAME}
       - name: Upload Release Asset
@@ -108,9 +108,9 @@ jobs:
         run: |
           PROJECT_VERSION=${{ steps.set-version.outputs.project-version }}
           echo $PROJECT_VERSION
-          FILE_NAME=jenkins-${PROJECT_VERSION}-1.2.noarch.rpm
+          FILE_NAME=jenkins-${PROJECT_VERSION}-1.2-opensuse.noarch.rpm
           echo "::set-output name=file-name::$FILE_NAME"
-          wget -q https://get.jenkins.io/jenkins/opensuse/${FILE_NAME}
+          wget -q https://get.jenkins.io/opensuse/jenkins-${PROJECT_VERSION}-1.2.noarch.rpm -O ${FILE_NAME} 
       - name: Upload Release Asset
         id: upload-suse-rpm
         if: always()
