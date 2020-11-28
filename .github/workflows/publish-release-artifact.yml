@@ -20,9 +20,9 @@ jobs:
         id: set-version
         run: |
           version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-          
-          SEPARATOR_COUNT=$(echo $version | sed 's/[^.]//g' | awk '{ print length }')
-          if [ $SEPERATOR_COUNT = 2 ]
+
+          dot_count=$(echo $version | sed 's/[^.]//g' | awk '{ print length }')
+          if [ "${dot_count}" = '2' ]
           then
             is_lts=true
           else
