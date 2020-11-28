@@ -29,7 +29,7 @@ jobs:
           echo "::set-output name=file-name::$FILE_NAME"
           wget -q https://get.jenkins.io/war/${PROJECT_VERSION}/jenkins.war
       - name: Upload Release Asset
-        id: upload-release-asset
+        id: upload-war
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -48,7 +48,7 @@ jobs:
           echo "::set-output name=file-name::$FILE_NAME"
           wget -q https://get.jenkins.io/debian/${FILE_NAME}
       - name: Upload Release Asset
-        id: upload-release-asset
+        id: upload-deb
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -68,7 +68,7 @@ jobs:
           echo "::set-output name=file-name::$FILE_NAME"
           wget -q https://get.jenkins.io/redhat/${FILE_NAME}
       - name: Upload Release Asset
-        id: upload-release-asset
+        id: upload-rpm
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -87,7 +87,7 @@ jobs:
           echo "::set-output name=file-name::$FILE_NAME"
           wget -q https://get.jenkins.io/windows/${PROJECT_VERSION}/jenkins.msi
       - name: Upload Release Asset
-        id: upload-release-asset
+        id: upload-msi
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -106,7 +106,7 @@ jobs:
           echo "::set-output name=file-name::$FILE_NAME"
           wget -q https://ftp-nyc.osuosl.org/pub/jenkins/opensuse/${FILE_NAME}
       - name: Upload Release Asset
-        id: upload-release-asset
+        id: upload-suse-rpm
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
