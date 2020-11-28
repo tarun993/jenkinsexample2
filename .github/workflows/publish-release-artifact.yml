@@ -35,12 +35,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./${{ steps.fetch-war.outputs.file-name }}-${{ steps.set-version.outputs.project-version }}.jar
-          asset_name: ${{ steps.fetch-war.outputs.file-name }}-${{ steps.set-version.outputs.project-version }}.jar
+          asset_path: ./${{ steps.fetch-war.outputs.file-name }}
+          asset_name: ${{ steps.fetch-war.outputs.file-name }}
           asset_content_type: application/java-archive
 ### Debian          
       - name: Fetch Deb
         id: fetch-deb
+        if: always()
         run: |
           PROJECT_VERSION=${{ steps.set-version.outputs.project-version }}
           echo $PROJECT_VERSION
@@ -49,6 +50,7 @@ jobs:
           wget -q https://get.jenkins.io/debian/${FILE_NAME}
       - name: Upload Release Asset
         id: upload-deb
+        if: always()
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -60,6 +62,7 @@ jobs:
 ### RedHat
       - name: Fetch RPM
         id: fetch-rpm
+        if: always()
         run: |
           PROJECT_VERSION=${{ steps.set-version.outputs.project-version }}
           echo $PROJECT_VERSION
@@ -69,6 +72,7 @@ jobs:
           wget -q https://get.jenkins.io/redhat/${FILE_NAME}
       - name: Upload Release Asset
         id: upload-rpm
+        if: always()
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -80,6 +84,7 @@ jobs:
 ### Windows
       - name: Fetch MSI
         id: fetch-msi
+        if: always()
         run: |
           PROJECT_VERSION=${{ steps.set-version.outputs.project-version }}
           echo $PROJECT_VERSION
@@ -88,6 +93,7 @@ jobs:
           wget -q https://get.jenkins.io/windows/${PROJECT_VERSION}/jenkins.msi
       - name: Upload Release Asset
         id: upload-msi
+        if: always()
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -99,6 +105,7 @@ jobs:
 ### openSUSE
       - name: Fetch suse rpm
         id: fetch-suse-rpm
+        if: always()
         run: |
           PROJECT_VERSION=${{ steps.set-version.outputs.project-version }}
           echo $PROJECT_VERSION
@@ -107,6 +114,7 @@ jobs:
           wget -q https://ftp-nyc.osuosl.org/pub/jenkins/opensuse/${FILE_NAME}
       - name: Upload Release Asset
         id: upload-suse-rpm
+        if: always()
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
