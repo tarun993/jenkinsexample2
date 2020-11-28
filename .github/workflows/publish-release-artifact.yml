@@ -45,7 +45,7 @@ jobs:
         run: |
           PROJECT_VERSION=${{ steps.set-version.outputs.project-version }}
           echo $PROJECT_VERSION
-          FILE_NAME=jenkins_2.${PROJECT_VERSION}.deb
+          FILE_NAME=jenkins_${PROJECT_VERSION}.deb
           echo "::set-output name=file-name::$FILE_NAME"
           wget -q https://get.jenkins.io/debian/${FILE_NAME}
       - name: Upload Release Asset
@@ -66,8 +66,7 @@ jobs:
         run: |
           PROJECT_VERSION=${{ steps.set-version.outputs.project-version }}
           echo $PROJECT_VERSION
-          FILE_NAME=jenkins-270-1.1.noarch.rpm
-          #FILE_NAME=jenkins-${PROJECT_VERSION}-1.1.noarch.rpm
+          FILE_NAME=jenkins-${PROJECT_VERSION}-1.1.noarch.rpm
           echo "::set-output name=file-name::$FILE_NAME"
           wget -q https://get.jenkins.io/redhat/${FILE_NAME}
       - name: Upload Release Asset
@@ -109,9 +108,9 @@ jobs:
         run: |
           PROJECT_VERSION=${{ steps.set-version.outputs.project-version }}
           echo $PROJECT_VERSION
-          FILE_NAME=jenkins-2.${PROJECT_VERSION}-1.2.noarch.rpm
+          FILE_NAME=jenkins-${PROJECT_VERSION}-1.2.noarch.rpm
           echo "::set-output name=file-name::$FILE_NAME"
-          wget -q https://ftp-nyc.osuosl.org/pub/jenkins/opensuse/${FILE_NAME}
+          wget -q https://get.jenkins.io/jenkins/opensuse/${FILE_NAME}
       - name: Upload Release Asset
         id: upload-suse-rpm
         if: always()
