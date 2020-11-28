@@ -5,9 +5,10 @@ on:
     types: [published]
 
 jobs:
-  publish:
+  determine-version:
     runs-on: ubuntu-latest
-
+    outputs:
+      project-version: ${{ steps.set-version.outputs.project-version }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK 1.8
@@ -19,12 +20,14 @@ jobs:
         run: |
           version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           echo "::set-output name=project-version::$version"
-### WAR
+  war:
+    runs-on: ubuntu-latest
+    steps:
       - name: Fetch war
         id: fetch-war
         run: |
           FILE_NAME=jenkins.war
-          PROJECT_VERSION=${{ steps.set-version.outputs.project-version }}
+          PROJECT_VERSION=${{ needs.determine-version.outputs.project-version }}
           echo $PROJECT_VERSION
           echo "::set-output name=file-name::$FILE_NAME"
           wget -q https://get.jenkins.io/war/${PROJECT_VERSION}/jenkins.war
@@ -38,12 +41,14 @@ jobs:
           asset_path: ./${{ steps.fetch-war.outputs.file-name }}
           asset_name: ${{ steps.fetch-war.outputs.file-name }}
           asset_content_type: application/java-archive
-### Debian          
+  debian:
+    runs-on: ubuntu-latest
+    steps:
       - name: Fetch Deb
         id: fetch-deb
         if: always()
         run: |
-          PROJECT_VERSION=${{ steps.set-version.outputs.project-version }}
+          PROJECT_VERSION=${{ needs.determine-version.outputs.project-version }}
           echo $PROJECT_VERSION
           FILE_NAME=jenkins_${PROJECT_VERSION}_all.deb
           echo "::set-output name=file-name::$FILE_NAME"
@@ -59,12 +64,14 @@ jobs:
           asset_path: ./${{ steps.fetch-deb.outputs.file-name }}
           asset_name: ${{ steps.fetch-deb.outputs.file-name }}
           asset_content_type: application/vnd.debian.binary-package
-### RedHat
+  redhat:
+    runs-on: ubuntu-latest
+    steps:
       - name: Fetch RPM
         id: fetch-rpm
         if: always()
         run: |
-          PROJECT_VERSION=${{ steps.set-version.outputs.project-version }}
+          PROJECT_VERSION=${{ needs.determine-version.outputs.project-version }}
           echo $PROJECT_VERSION
           FILE_NAME=jenkins-${PROJECT_VERSION}-1.1.noarch.rpm
           echo "::set-output name=file-name::$FILE_NAME"
@@ -80,12 +87,14 @@ jobs:
           asset_path: ./${{ steps.fetch-rpm.outputs.file-name }}
           asset_name: ${{ steps.fetch-rpm.outputs.file-name }}
           asset_content_type: application/x-redhat-package-manager
-### Windows
+  windows:
+    runs-on: ubuntu-latest
+    steps:
       - name: Fetch MSI
         id: fetch-msi
         if: always()
         run: |
-          PROJECT_VERSION=${{ steps.set-version.outputs.project-version }}
+          PROJECT_VERSION=${{ needs.determine-version.outputs.project-version }}
           echo $PROJECT_VERSION
           FILE_NAME=jenkins.msi
           echo "::set-output name=file-name::$FILE_NAME"
@@ -101,12 +110,14 @@ jobs:
           asset_path: ./${{ steps.fetch-msi.outputs.file-name }}
           asset_name: ${{ steps.fetch-msi.outputs.file-name }}
           asset_content_type: application/octet-stream
-### openSUSE
+  suse:
+    runs-on: ubuntu-latest
+    steps:
       - name: Fetch suse rpm
         id: fetch-suse-rpm
         if: always()
         run: |
-          PROJECT_VERSION=${{ steps.set-version.outputs.project-version }}
+          PROJECT_VERSION=${{ needs.determine-version.outputs.project-version }}
           echo $PROJECT_VERSION
           FILE_NAME=jenkins-${PROJECT_VERSION}-1.2-opensuse.noarch.rpm
           echo "::set-output name=file-name::$FILE_NAME"
