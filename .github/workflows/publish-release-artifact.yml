@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       project-version: ${{ steps.set-version.outputs.project-version }}
+      is-lts: ${{ steps.set-version.outputs.is-lts }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK 1.8
@@ -19,6 +20,18 @@ jobs:
         id: set-version
         run: |
           version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          
+          SEPARATOR_COUNT=$(echo $version | sed 's/[^.]//g' | awk '{ print length }')
+          if [ $SEPERATOR_COUNT = 2 ]
+          then
+            is_lts=true
+          else
+            is_lts=false
+          fi
+          
+          echo "Version is $version, is_lts: $is_lts"
+
+          echo "::set-output name=is-lts::is_lts"
           echo "::set-output name=project-version::$version"
   war:
     runs-on: ubuntu-latest
@@ -29,9 +42,17 @@ jobs:
         run: |
           FILE_NAME=jenkins.war
           PROJECT_VERSION=${{ needs.determine-version.outputs.project-version }}
+          IS_LTS=${{ needs.determine-version.outputs.is-lts }}
           echo $PROJECT_VERSION
           echo "::set-output name=file-name::$FILE_NAME"
-          wget -q https://get.jenkins.io/war/${PROJECT_VERSION}/jenkins.war
+          
+          REPO=war
+          if [ ${IS_LTS} = 'true' ]
+          then
+            REPO=war-stable
+          fi
+          
+          wget -q https://get.jenkins.io/${REPO}/${PROJECT_VERSION}/jenkins.war
       - name: Upload Release Asset
         id: upload-war
         uses: actions/upload-release-asset@v1
@@ -53,8 +74,16 @@ jobs:
           PROJECT_VERSION=${{ needs.determine-version.outputs.project-version }}
           echo $PROJECT_VERSION
           FILE_NAME=jenkins_${PROJECT_VERSION}_all.deb
+          IS_LTS=${{ needs.determine-version.outputs.is-lts }}
           echo "::set-output name=file-name::$FILE_NAME"
-          wget -q https://get.jenkins.io/debian/${FILE_NAME}
+          
+          REPO=debian
+          if [ ${IS_LTS} = 'true' ]
+          then
+            REPO=debian-stable
+          fi
+          
+          wget -q https://get.jenkins.io/${REPO}/${FILE_NAME}
       - name: Upload Release Asset
         id: upload-deb
         if: always()
@@ -77,7 +106,16 @@ jobs:
           PROJECT_VERSION=${{ needs.determine-version.outputs.project-version }}
           echo $PROJECT_VERSION
           FILE_NAME=jenkins-${PROJECT_VERSION}-1.1.noarch.rpm
+          IS_LTS=${{ needs.determine-version.outputs.is-lts }}
+          
           echo "::set-output name=file-name::$FILE_NAME"
+
+          REPO=redhat
+          if [ ${IS_LTS} = 'true' ]
+          then
+            REPO=redhat-stable
+          fi
+          
           wget -q https://get.jenkins.io/redhat/${FILE_NAME}
       - name: Upload Release Asset
         id: upload-rpm
@@ -101,8 +139,17 @@ jobs:
           PROJECT_VERSION=${{ needs.determine-version.outputs.project-version }}
           echo $PROJECT_VERSION
           FILE_NAME=jenkins.msi
+          IS_LTS=${{ needs.determine-version.outputs.is-lts }}
+          
           echo "::set-output name=file-name::$FILE_NAME"
-          wget -q https://get.jenkins.io/windows/${PROJECT_VERSION}/jenkins.msi
+
+          REPO=windows
+          if [ ${IS_LTS} = 'true' ]
+          then
+            REPO=windows-stable
+          fi
+          
+          wget -q https://get.jenkins.io/${REPO}/${PROJECT_VERSION}/jenkins.msi
       - name: Upload Release Asset
         id: upload-msi
         if: always()
@@ -125,8 +172,17 @@ jobs:
           PROJECT_VERSION=${{ needs.determine-version.outputs.project-version }}
           echo $PROJECT_VERSION
           FILE_NAME=jenkins-${PROJECT_VERSION}-1.2-opensuse.noarch.rpm
+          IS_LTS=${{ needs.determine-version.outputs.is-lts }}
+          
           echo "::set-output name=file-name::$FILE_NAME"
-          wget -q https://get.jenkins.io/opensuse/jenkins-${PROJECT_VERSION}-1.2.noarch.rpm -O ${FILE_NAME} 
+
+          REPO=opensuse
+          if [ ${IS_LTS} = 'true' ]
+          then
+            REPO=opensuse-stable
+          fi
+          
+          wget -q https://get.jenkins.io/${REPO}/jenkins-${PROJECT_VERSION}-1.2.noarch.rpm -O ${FILE_NAME} 
       - name: Upload Release Asset
         id: upload-suse-rpm
         if: always()
